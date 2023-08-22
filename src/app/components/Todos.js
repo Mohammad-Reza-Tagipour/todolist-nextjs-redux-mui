@@ -1,181 +1,120 @@
-// 'use client';
-// import React, { useRef, useState } from 'react';
-// import { useDispatch, useSelector } from 'react-redux';
-// import {
-//   addTodos,
-//   removeTodos,
-//   updateTodos,
-//   compeleteTodos,
-// } from '../redux/reducer';
+'use client';
 
-// const Todos = () => {
-//   const [todo, setTodo] = useState('');
-//   const inputRef = useRef(true);
-//   const dispatch = useDispatch();
-//   const todos = useSelector((state) => state);
-//   const [sort, setSort] = useState('active');
-
-//   const changeFocus = () => {
-//     const { current } = inputRef;
-//     current.disabled = false;
-//     current.focus();
-//   };
-
-//   const update = (id, value, e) => {
-//     if (e.which === 13) {
-//       dispatch(updateTodos({ id, item: value }));
-//       const { current } = inputRef;
-//       current.disabled = true;
-//     }
-//   };
-
-//   const handleChange = (event) => {
-//     setTodo(event.target.value);
-//   };
-
-//   return (
-//     <div className="addTodos">
-//       <input type="text" onChange={handleChange} className="todo-input" />
-//       <button
-//         className="add-btn"
-//         onClick={() =>
-//           dispatch(
-//             addTodos({
-//               id: Math.floor(Math.random() * 1000),
-//               item: todo,
-//               completed: false,
-//             })
-//           )
-//         }
-//       >
-//         Add
-//       </button>
-//       <br />
-//       {/* <ul>
-//         {todos.map((item) => (
-//           <li key={item.id}>
-//             <textarea
-//               ref={inputRef}
-//               disabled={inputRef}
-//               defaultValue={item.item}
-//               onKeyDown={(e) => update(item.id, inputRef.current.value, e)}
-//             />
-//             <button onClick={() => changeFocus()}>Edit</button>
-//             <button onClick={() => dispatch(removeTodos(item.id))}>
-//               Delete
-//             </button>
-//             <button onClick={() => dispatch(compeleteTodos(item.id))}>
-//               Completed
-//             </button>
-//           </li>
-//         ))}
-//       </ul> */}
-//       <div className="displayTodos">
-//         <div className="buttons">
-//           <button onClick={() => setSort('active')}>Active</button>
-//           <button onClick={() => setSort('completed')}>Completed</button>
-//           <button onClick={() => setSort('all')}>All</button>
-//         </div>
-//         <ul>
-//           {todos && todos.length > 0 && sort === 'active'
-//             ? todos.map((item) => {
-//                 return (
-//                   item.compeleted === false && (
-//                     <TodoItem key={item.key} item={item} />
-//                   )
-//                 );
-//               })
-//             : null}
-//         </ul>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Todos;
-/////////////////////////////////////
-import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  addTodos,
-  removeTodos,
-  updateTodos,
-  compeleteTodos,
-} from '../redux/reducer';
-import TodoItem from './TodoItem';
+
+import { addTodos } from '../redux/reducer';
+import { Box, Button, TextField, Typography } from '@mui/material';
+import { useForm, Controller } from 'react-hook-form';
+
+import { useRef, useState } from 'react';
 
 const Todos = () => {
   const [todo, setTodo] = useState('');
+  const [todoTitle, setTodoTitle] = useState('');
+  const [isClient, setIsClient] = useState(false);
   const inputRef = useRef(true);
   const dispatch = useDispatch();
   const todos = useSelector((state) => state);
-  const [sort, setSort] = useState('active');
 
-  const changeFocus = () => {
-    const { current } = inputRef;
-    current.disabled = false;
-    current.focus();
-  };
+  const { handleSubmit, register, reset, control, formState } = useForm();
+  const { errors } = formState;
+  const onSubmit = (data) => {
+    dispatch(
+      addTodos({
+        ...data,
+        id: Math.floor(Math.random() * 1000),
+        item: todo,
+        completed: false,
+        title: todoTitle,
+      })
+    );
 
-  const update = (id, value, e) => {
-    if (e.which === 13) {
-      dispatch(updateTodos({ id, item: value }));
-      const { current } = inputRef;
-      current.disabled = true;
-    }
-  };
-
-  const handleChange = (event) => {
-    setTodo(event.target.value);
+    reset();
   };
 
   return (
-    <div className="addTodos">
-      <input type="text" onChange={handleChange} className="todo-input" />
-      <button
-        className="add-btn"
-        onClick={() =>
-          dispatch(
-            addTodos({
-              id: Math.floor(Math.random() * 1000),
-              item: todo,
-              completed: false,
-            })
-          )
-        }
+    <Box sx={{ marginTop: '50px' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px',
+          borderRadius: '10px',
+          border: '1px solid #ccc',
+          backgroundColor: '#f5f5f5',
+        }}
       >
-        Add
-      </button>
-      <br />
-
-      {/* {todos.map((item) => (
-        <li key={item.id}>
-          <textarea
-            ref={inputRef}
-            disabled={inputRef}
-            defaultValue={item.item}
-            onKeyDown={(e) => update(item.id, inputRef.current.value, e)}
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '20px',
+          }}
+        >
+          <Controller
+            name="item"
+            control={control}
+            defaultValue=""
+            rules={{ required: true }}
+            render={({ field }) => (
+              <TextField
+                {...register('decription', {
+                  required: { value: true, message: 'Decription is required' },
+                })}
+                label="Add todo decription"
+                variant="outlined"
+                size="small"
+                margin="normal"
+                value={field.value}
+                onChange={(event) => {
+                  setTodo(event.target.value);
+                  field.onChange(event);
+                }}
+                inputRef={inputRef}
+                helperText={errors.decription?.message}
+              />
+            )}
           />
-          <button onClick={() => changeFocus()}>Edit</button>
-          <button onClick={() => dispatch(removeTodos(item.id))}>Delete</button>
-          <button onClick={() => dispatch(compeleteTodos(item.id))}>
-            Completed
-          </button>
-        </li>
-      ))} */}
-      {/* <div className="displayTodos">
-        <div className="buttons">
-          <button onClick={() => setSort('active')}>Active</button>
-          <button onClick={() => setSort('completed')}>Completed</button>
-          <button onClick={() => setSort('all')}>All</button>
-        </div>
-        <ul>
-          {todos && todos.length > 0 && sort === 'active'
-            ? todos.map((item) => <TodoItem key={item.id} item={item} />)
-            : null}
-        </ul>
-      </div> */}
-    </div>
+          <Controller
+            name="title"
+            control={control}
+            defaultValue=""
+            rules={{ required: true }}
+            render={({ field }) => (
+              <TextField
+                {...register('title', {
+                  required: { value: true, message: 'Title is required' },
+                })}
+                label="Todo Title"
+                variant="outlined"
+                size="small"
+                margin="normal"
+                value={field.value}
+                onChange={(event) => {
+                  setTodoTitle(event.target.value);
+                  field.onChange(event);
+                }}
+                inputRef={inputRef}
+                helperText={errors.title?.message}
+              />
+            )}
+          />
+          <Button
+            variant="contained"
+            size="small"
+            margin="normal"
+            type="submit"
+            sx={{ mt: 2.4 }}
+          >
+            Add
+          </Button>
+        </form>
+      </Box>
+    </Box>
   );
 };
 

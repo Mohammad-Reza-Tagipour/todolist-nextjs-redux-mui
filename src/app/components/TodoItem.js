@@ -1,67 +1,26 @@
-// import { useRef } from 'react';
-// import { useDispatch, useSelector } from 'react-redux';
-
-// const TodoItem = (props) => {
-//   const dispatch = useDispatch();
-//   const todos = useSelector((state) => state.todos);
-//   // const { item } = props;
-//   console.log(props);
-//   const inputRef = useRef(true);
-//   const changeFocus = () => {
-//     const { current } = inputRef;
-//     current.disabled = false;
-//     current.focus();
-//   };
-
-//   const update = (id, value, e) => {
-//     if (e.which === 13) {
-//       dispatch(updateTodos({ id, item: value }));
-//       const { current } = inputRef;
-//       current.disabled = true;
-//     }
-//   };
-
-//   return (
-//     <ul>
-//       {props.map((item) => {
-//         <li key={item.id}>
-//           <textarea
-//             ref={inputRef}
-//             disabled={inputRef}
-//             defaultValue={item.item}
-//             onKeyDown={(e) => update(item.id, inputRef.current.value, e)}
-//           />
-//           <button onClick={() => changeFocus()}>Edit</button>
-//           <button onClick={() => dispatch(removeTodos(item.id))}>Delete</button>
-//           <button onClick={() => dispatch(compeleteTodos(item.id))}>
-//             Completed
-//           </button>
-//         </li>;
-//       })}
-//     </ul>
-//   );
-// };
-
-// export default TodoItem;
-////////////////////////////
-import { useRef } from 'react';
+'use client';
+import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  addTodos,
-  removeTodos,
-  updateTodos,
-  compeleteTodos,
-} from '../redux/reducer';
+import { removeTodos, updateTodos, compeleteTodos } from '../redux/reducer';
+import { Box, TextField, Button, IconButton, Typography } from '@mui/material';
+
+import { DoneRounded } from '@mui/icons-material';
 const TodoItem = (props) => {
   const dispatch = useDispatch();
-  const todos = useSelector((state) => state.todos);
+  const todos = useSelector((state) => state);
+  console.log(todos);
   const { item } = props;
 
   const inputRef = useRef(true);
+
+  const [isEditing, setIsEditing] = useState(false);
+
   const changeFocus = () => {
     const { current } = inputRef;
-    current.disabled = false;
-    current.focus();
+
+    inputRef.current.disabled = false;
+    inputRef.current.focus();
+    setIsEditing(true);
   };
 
   const update = (id, value, e) => {
@@ -73,22 +32,153 @@ const TodoItem = (props) => {
   };
 
   return (
-    <li key={item.id} className="card">
-      <textarea
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        marginBottom: '10px',
+        padding: '10px',
+        borderRadius: '10px',
+        border: '1px solid #ccc',
+        backgroundColor: item.completed === true ? '#F0EAD6' : '#fff',
+      }}
+    >
+      {item.completed && (
+        <Box sx={{ mt: 2, color: '#666' }}>
+          <Typography
+            sx={{
+              backgroundColor: '#599ba3',
+              color: 'white',
+              padding: '7px',
+              paddingLeft: '12px',
+              borderRadius: '2rem',
+            }}
+            className="completed"
+          >
+            <DoneRounded />
+            DONE
+          </Typography>
+        </Box>
+      )}
+      <TextField
+        label="Edit description"
+        size="small"
+        fullWidth
+        margin="normal"
         ref={inputRef}
-        disabled={inputRef}
+        value={item.item}
+        inputRef={inputRef}
+        disabled={inputRef.current}
         defaultValue={item.item}
         onKeyDown={(e) => update(item.id, inputRef.current.value, e)}
       />
-      <div className="btns">
-        <button onClick={() => changeFocus()}>Edit</button>
-        <button onClick={() => dispatch(compeleteTodos(item.id))}>
-          Completed
-        </button>
-        <button onClick={() => dispatch(removeTodos(item.id))}>Delete</button>
-      </div>
-      {item.completed && <span className="completed">done</span>}
-    </li>
+      <TextField
+        label="Edit Title"
+        size="small"
+        fullWidth
+        margin="normal"
+        ref={inputRef}
+        value={item.title}
+        inputRef={inputRef}
+        disabled={inputRef.current}
+        defaultValue={item.title}
+        onKeyDown={(e) => update(item.id, inputRef.current.value, e)}
+      />
+      {isEditing ? (
+        <div>
+          <span
+            style={{
+              fontSize: '16px',
+            }}
+          >
+            Edit Decription
+          </span>
+          <textarea
+            ref={inputRef}
+            disabled={inputRef}
+            defaultValue={item.item}
+            onKeyDown={(e) => update(item.id, inputRef.current.value, e)}
+            style={{
+              width: '98%',
+              height: '30px',
+              padding: '2px',
+              fontSize: '16px',
+              border: '1px solid #ccc',
+              borderRadius: '5px',
+              // resize: 'none',
+              resize: 'none',
+            }}
+          />
+          <span
+            style={{
+              fontSize: '16px',
+            }}
+          >
+            Edit Title
+          </span>
+          <textarea
+            ref={inputRef}
+            disabled={inputRef}
+            defaultValue={item.title}
+            onKeyDown={(e) => update(item.id, inputRef.current.value, e)}
+            style={{
+              width: '98%',
+              height: '30px',
+              padding: '2px',
+              fontSize: '16px',
+              border: '1px solid #ccc',
+              borderRadius: '5px',
+              // resize: 'none',
+              resize: 'none',
+            }}
+          />
+        </div>
+      ) : null}
+
+      <Box sx={{ display: 'flex', justifyContent: 'pace-between', mt: 2 }}>
+        <Button
+          variant="contained"
+          size="small"
+          onClick={() => changeFocus()}
+          sx={{ mr: 2 }}
+        >
+          Edit
+        </Button>
+        {item.completed === true ? (
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => dispatch(compeleteTodos(item.id))}
+            disabled
+            sx={{ mr: 2 }}
+          >
+            Completed
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => dispatch(compeleteTodos(item.id))}
+            sx={{ mr: 2 }}
+          >
+            Complete
+          </Button>
+        )}
+
+        <IconButton
+          onClick={() => dispatch(removeTodos(item.id))}
+          sx={{
+            ':hover': {
+              backgroundColor: 'ed',
+              color: '#fff',
+            },
+          }}
+        >
+          <Button onClick={() => dispatch(removeTodos(item.id))}>Delete</Button>
+        </IconButton>
+      </Box>
+    </Box>
   );
 };
 

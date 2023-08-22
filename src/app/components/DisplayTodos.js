@@ -1,6 +1,8 @@
+'use client';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TodoItem from './TodoItem';
+import { Button, List, Typography } from '@mui/material';
 
 const DisplayTodos = () => {
   const dispatch = useDispatch();
@@ -8,13 +10,61 @@ const DisplayTodos = () => {
   const [sort, setSort] = useState('active');
 
   return (
-    <div className="displayTodos">
-      <div className="buttons">
-        <button onClick={() => setSort('active')}>Active</button>
-        <button onClick={() => setSort('completed')}>Completed</button>
-        <button onClick={() => setSort('all')}>All</button>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '3rem',
+      }}
+    >
+      <Typography variant="h4" sx={{ marginBottom: '2rem', color: '#E9DCC9' }}>
+        Display Todos
+      </Typography>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: '2rem',
+        }}
+      >
+        <Button
+          variant={sort === 'active' ? 'contained' : 'outlined'}
+          color="primary"
+          sx={{ marginRight: '1rem' }}
+          onClick={() => setSort('active')}
+        >
+          Active
+        </Button>
+        <Button
+          variant={sort === 'completed' ? 'contained' : 'outlined'}
+          color="primary"
+          sx={{ marginRight: '1rem' }}
+          onClick={() => setSort('completed')}
+        >
+          Completed
+        </Button>
+        <Button
+          variant={sort === 'all' ? 'contained' : 'outlined'}
+          color="primary"
+          onClick={() => setSort('all')}
+        >
+          All
+        </Button>
       </div>
-      <ul>
+      <List
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          gap: '50px',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: '2rem',
+          maxWidth: 1200,
+          flexWrap: 'wrap',
+        }}
+      >
         {todos && todos.length > 0 && sort === 'active'
           ? todos.map(
               (item) =>
@@ -23,7 +73,6 @@ const DisplayTodos = () => {
                 )
             )
           : null}
-        {/* completed */}
         {todos && todos.length > 0 && sort === 'completed'
           ? todos.map(
               (item) =>
@@ -32,11 +81,10 @@ const DisplayTodos = () => {
                 )
             )
           : null}
-        {/* All */}
         {todos && todos.length > 0 && sort === 'all'
           ? todos.map((item) => <TodoItem key={item.id} item={item} />)
           : null}
-      </ul>
+      </List>
     </div>
   );
 };
