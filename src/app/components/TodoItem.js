@@ -150,7 +150,7 @@ const TodoItem = (props) => {
           onClick={() => changeFocus()}
           sx={{ mr: 2 }}
         >
-          Edit
+          Edit Description
         </Button>
         {item.completed === true ? (
           <Button
