@@ -32,7 +32,7 @@ const TodoItem = (props) => {
   };
   const updateDes = (id, value, e) => {
     if (e.which === 13) {
-      dispatch(updateTodos({ id, item: value }));
+      dispatch(updateTodos({ id, title: value }));
       const { current } = inputRef;
       current.disabled = true;
     }
@@ -78,7 +78,7 @@ const TodoItem = (props) => {
         inputRef={inputRef}
         disabled={inputRef.current}
         defaultValue={item.item}
-        onKeyDown={(e) => update(item.id, inputRef.current.value, e)}
+        // onKeyDown={(e) => update(item.id, inputRef.current.value, e)}
       />
       <TextField
         label="Title"
@@ -90,18 +90,18 @@ const TodoItem = (props) => {
         inputRef={inputRef}
         disabled={inputRef.current}
         defaultValue={item.title}
-        onKeyDown={(e) => update(item.id, inputRef.current.value, e)}
+        // onKeyDown={(e) => update(item.id, inputRef.current.value, e)}
       />
       {isEditing ? (
         <div>
-          <span
+          {/* <span
             style={{
               fontSize: '16px',
             }}
           >
             Edit title
-          </span>
-          <textarea
+          </span> */}
+          {/* <textarea
             ref={inputRef}
             disabled={inputRef}
             defaultValue={item.item}
@@ -116,7 +116,7 @@ const TodoItem = (props) => {
               // resize: 'none',
               resize: 'none',
             }}
-          />
+          /> */}
           <span
             style={{
               fontSize: '16px',
