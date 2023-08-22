@@ -30,6 +30,13 @@ const TodoItem = (props) => {
       current.disabled = true;
     }
   };
+  const updateDes = (id, value, e) => {
+    if (e.which === 13) {
+      dispatch(updateTodos({ id, item: value }));
+      const { current } = inputRef;
+      current.disabled = true;
+    }
+  };
 
   return (
     <Box
@@ -92,13 +99,13 @@ const TodoItem = (props) => {
               fontSize: '16px',
             }}
           >
-            Edit Decription
+            Edit title
           </span>
           <textarea
             ref={inputRef}
             disabled={inputRef}
             defaultValue={item.item}
-            onKeyDown={(e) => update(item.id, inputRef.current.value, e)}
+            onKeyDown={(e) => updateDes(item.id, inputRef.current.value, e)}
             style={{
               width: '98%',
               height: '30px',
@@ -115,7 +122,7 @@ const TodoItem = (props) => {
               fontSize: '16px',
             }}
           >
-            Edit Title
+            Edit description
           </span>
           <textarea
             ref={inputRef}
