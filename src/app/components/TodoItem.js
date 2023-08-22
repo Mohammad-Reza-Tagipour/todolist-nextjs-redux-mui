@@ -69,7 +69,7 @@ const TodoItem = (props) => {
         </Box>
       )}
       <TextField
-        label="Edit description"
+        label="Description"
         size="small"
         fullWidth
         margin="normal"
@@ -81,7 +81,7 @@ const TodoItem = (props) => {
         onKeyDown={(e) => update(item.id, inputRef.current.value, e)}
       />
       <TextField
-        label="Edit Title"
+        label="Title"
         size="small"
         fullWidth
         margin="normal"
